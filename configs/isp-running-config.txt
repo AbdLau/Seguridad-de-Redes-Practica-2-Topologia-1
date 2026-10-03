@@ -1,0 +1,142 @@
+ISP#show running-config
+Building configuration...
+
+Current configuration : 2149 bytes
+!
+! Last configuration change at 05:40:39 UTC Sat Oct 3 2026
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname ISP
+!
+boot-start-marker
+boot-end-marker
+!
+!
+security passwords min-length 10
+logging buffered 16384
+enable secret 5 $1$L42d$5i.V4oXLf.08eWn6y1CQ5.
+!
+no aaa new-model
+no ip source-route
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+no ip bootp server
+no ip domain lookup
+ip domain name lab.local
+ip cef
+login block-for 120 attempts 3 within 60
+no ipv6 cef
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$uzAN$DlTproLw87KCibCwYIL5q.
+!
+!
+!
+!
+!
+ip tcp synwait-time 5
+ip ssh time-out 60
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ no ip address
+ shutdown
+ speed auto
+ duplex auto
+!
+interface FastEthernet0/1
+ no ip address
+ shutdown
+ speed auto
+ duplex auto
+!
+interface GigabitEthernet1/0
+ description Hacia Forti-1
+ ip address 200.8.47.1 255.255.255.252
+ ip access-group ANTI_SPOOF_IN in
+ no ip redirects
+ no ip unreachables
+ no ip proxy-arp
+ ip verify unicast source reachable-via rx
+ negotiation auto
+!
+interface GigabitEthernet2/0
+ description Hacia Forti-2
+ ip address 200.8.47.5 255.255.255.252
+ ip access-group ANTI_SPOOF_IN in
+ no ip redirects
+ no ip unreachables
+ no ip proxy-arp
+ ip verify unicast source reachable-via rx
+ negotiation auto
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ip access-list extended ANTI_SPOOF_IN
+ deny   ip 10.0.0.0 0.255.255.255 any log
+ deny   ip 172.16.0.0 0.15.255.255 any log
+ deny   ip 192.168.0.0 0.0.255.255 any log
+ deny   ip 127.0.0.0 0.255.255.255 any
+ deny   ip 0.0.0.0 0.255.255.255 any
+ deny   ip 224.0.0.0 15.255.255.255 any
+ permit ip any any
+!
+no cdp run
+!
+!
+!
+control-plane
+!
+banner motd ^CAcceso restringido. Solo personal autorizado.^C
+!
+line con 0
+ exec-timeout 5 0
+ privilege level 15
+ logging synchronous
+ login local
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ no exec
+ stopbits 1
+line vty 0 4
+ exec-timeout 5 0
+ login local
+ transport input none
+!
+!
+end
+
+ISP#
